@@ -1,0 +1,7 @@
+1.不使用链接脚本
+gcc -c -fno-builtin TinyHelloWorld.c
+ld -static -e nomain -o TinyHelloWorld TinyHelloWorld.o
+
+2.使用链接脚本
+gcc -c -fno-builtin TinyHelloWorld.c
+ld -static -T TinyHelloWorld.lds -o TinyHelloWorld TinyHelloWorld.o
