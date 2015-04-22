@@ -1,0 +1,16 @@
+BroadCastAddr=10.0.3.255
+BroadPortAddr=10.0.3.7
+BroadCastPort=6666
+BroadCastPortName=eth1
+BroadCastTime=3
+SinkNum=7
+SinkCount=9
+HostIp=10.0.1.7 10.0.3.7
+SendIp=202.202.96.33 10.0.3.100
+NetMask=255.255.255.0 255.255.255.0
+NetGw=10.0.1.100 0.0.0.0
+DestIp=222.128.13.159
+HAS_SATELLITE=NO
+INFO_SERVER_PATH=/var/info_server_path
+AGENT_SERVER_IP=222.128.13.159
+AGENT_SERVER_PORT=9999

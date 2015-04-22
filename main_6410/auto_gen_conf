@@ -1,0 +1,45 @@
+#!/bin/sh
+
+NFS_CONF="nfs.sh"
+MAIN_CONF="configure"
+INIT_CONF="init_config"
+START_CONF="start_service"
+
+if [ ! -n "$1" ] ;then
+	echo "please input a node number!"
+	exit 0
+fi
+
+# generate nfs.sh file
+echo "Generating nfs.sh file..."
+echo "#!/bin/sh" > ${NFS_CONF}
+echo "mount -t nfs 192.168.$1.10:/home/root/Project /mnt/nfs -o nolock,proto=tcp,nfsvers=3" >> ${NFS_CONF}
+
+# generate configure file
+echo "Generating configure file..."
+echo "NODE_NUMBER=$1" > ${MAIN_CONF}
+echo "IP=192.168.$1.2" >> ${MAIN_CONF}
+echo "SER_IP=222.128.13.159" >> ${MAIN_CONF}
+echo "VIDEO_EXIST=0" >> ${MAIN_CONF}
+echo "FLAG_GPS=1" >> ${MAIN_CONF}
+echo "FLAG_IP=0" >> ${MAIN_CONF}
+echo "FLAG_SER=0" >> ${MAIN_CONF}
+echo "FLAG_VIDEO=0" >> ${MAIN_CONF}
+echo "SLEEP_SEC=5" >> ${MAIN_CONF}
+
+# generate init_config file
+echo "Generating init_config file..."
+echo "#!/bin/sh" > ${INIT_CONF}
+echo "ifconfig eth0 192.168.$1.2 netmask 255.255.255.0" >> ${INIT_CONF}
+echo "route add default gw 192.168.$1.1" >> ${INIT_CONF}
+
+# generate start_service file
+echo "Generating start_service file..."
+echo "#!/bin/sh" > ${START_CONF}
+echo "cd /main_6410" >> ${START_CONF}
+echo "./init_config" >> ${START_CONF}
+echo "./main_control_arm >> /dev/null &" >> ${START_CONF}
+echo "./version_20150414 -i 192.168.4.155 -t 128 -k 500 -c $1 -d 0 -g 20 >> /dev/null &" >> ${START_CONF}
+echo "cd /main_6410/bx" >> ${START_CONF}
+echo "./lua -g $1 -o 1 main.lua 1>/dev/null 2>&1 &" >> ${START_CONF}
+

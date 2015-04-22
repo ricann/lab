@@ -1,0 +1,3 @@
+IFS=eth0 lo
+RULES=udp and port 8000
+SAT_SERVER_PATH=/var/sat_server_path
