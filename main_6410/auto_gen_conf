@@ -10,6 +10,11 @@ if [ ! -n "$1" ] ;then
 	exit 0
 fi
 
+if [ ! -n "$2" ] ;then
+	echo "please input dest ip!"
+	exit 0
+fi
+
 # generate nfs.sh file
 echo "Generating nfs.sh file..."
 echo "#!/bin/sh" > ${NFS_CONF}
@@ -19,7 +24,7 @@ echo "mount -t nfs 192.168.$1.10:/home/root/Project /mnt/nfs -o nolock,proto=tcp
 echo "Generating configure file..."
 echo "NODE_NUMBER=$1" > ${MAIN_CONF}
 echo "IP=192.168.$1.2" >> ${MAIN_CONF}
-echo "SER_IP=222.128.13.159" >> ${MAIN_CONF}
+echo "SER_IP=$2" >> ${MAIN_CONF}
 echo "VIDEO_EXIST=0" >> ${MAIN_CONF}
 echo "FLAG_GPS=1" >> ${MAIN_CONF}
 echo "FLAG_IP=0" >> ${MAIN_CONF}
@@ -39,7 +44,7 @@ echo "#!/bin/sh" > ${START_CONF}
 echo "cd /main_6410" >> ${START_CONF}
 echo "./init_config" >> ${START_CONF}
 echo "./main_control_arm >> /dev/null &" >> ${START_CONF}
-echo "./version_20150414 -i 192.168.4.155 -t 128 -k 500 -c $1 -d 0 -g 20 >> /dev/null &" >> ${START_CONF}
+echo "./version_20150414 -i $2 -t 128 -k 500 -c $1 -d 0 -g 20 >> /dev/null &" >> ${START_CONF}
 echo "cd /main_6410/bx" >> ${START_CONF}
 echo "./lua -g $1 -o 1 main.lua 1>/dev/null 2>&1 &" >> ${START_CONF}
 

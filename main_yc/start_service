@@ -1,0 +1,4 @@
+#!/bin/sh
+./arm_control >> /dev/null &
+./arm_Route >> /dev/null &
+./camctrl -i 1.1.1.1 -c 5 >> /dev/null &

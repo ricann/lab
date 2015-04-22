@@ -3,10 +3,16 @@
 NFS_CONF="nfs.sh"
 POWER_CONF="configure"
 ROUTE_CONF="IpNet_config"
+START_CONF="start_service"
 
 
 if [ ! -n "$1" ] ;then
 	echo "please input a node number!"
+	exit 0
+fi
+
+if [ ! -n "$2" ] ;then
+	echo "please input dest ip!"
 	exit 0
 fi
 
@@ -16,8 +22,6 @@ echo "#!/bin/sh" > ${NFS_CONF}
 echo "mount -t nfs 192.168.$1.10:/home/root/Project /mnt/nfs -o nolock,proto=tcp,nfsvers=3" >> ${NFS_CONF}
 
 
-
-
 # generate configure file
 echo "Generating configure file..."
 echo "NODE_ID=$1" > ${POWER_CONF}
@@ -25,7 +29,7 @@ echo "OPEN_PORT=/dev/ttyS4" >> ${POWER_CONF}
 echo "SETTING_VALUE=1111" >> ${POWER_CONF}
 echo "NUMBER=-1" >> ${POWER_CONF}
 echo "SLEEP_MINUTE=1" >> ${POWER_CONF}
-echo "SEND_IP=192.168.5.1" >> ${POWER_CONF}
+echo "SEND_IP=$2" >> ${POWER_CONF}
 echo "SERVER_PORT=9000" >> ${POWER_CONF}
 
 
@@ -42,9 +46,16 @@ echo "HostIp=10.0.1.$1 10.0.3.$1" >> ${ROUTE_CONF}
 echo "SendIp=202.202.96.33 10.0.3.100" >> ${ROUTE_CONF}
 echo "NetMask=255.255.255.0 255.255.255.0" >> ${ROUTE_CONF}
 echo "NetGw=10.0.1.100 0.0.0.0" >> ${ROUTE_CONF}
-echo "DestIp=222.128.13.159" >> ${ROUTE_CONF}
+echo "DestIp=$2" >> ${ROUTE_CONF}
 echo "HAS_SATELLITE=NO" >> ${ROUTE_CONF}
 echo "INFO_SERVER_PATH=/var/info_server_path" >> ${ROUTE_CONF}
 echo "AGENT_SERVER_IP=222.128.13.159" >> ${ROUTE_CONF}
 echo "AGENT_SERVER_PORT=9999" >> ${ROUTE_CONF}
+
+# generate start_service file
+echo "Generating start_service file..."
+echo "#!/bin/sh" > ${START_CONF}
+echo "./arm_control >> /dev/null &" >> ${START_CONF}
+echo "./arm_Route >> /dev/null &" >> ${START_CONF}
+echo "./camctrl -i $2 -c $1 >> /dev/null &" >> ${START_CONF}
 
