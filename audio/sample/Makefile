@@ -1,9 +1,9 @@
 
-#CC=arm-none-linux-gnueabi-gcc
-CC=gcc
+CC=arm-none-linux-gnueabi-gcc
+#CC=gcc
 CC_FLAGS = -g -c -Os -Wall
-#LIBRARY = /usr/local/arm/alsa/lib/libasound.so
-LIBRARY = /usr/lib/i386-linux-gnu/libasound.so
+LIBRARY = /usr/local/arm/alsa/lib/libasound.so
+#LIBRARY = /usr/lib/i386-linux-gnu/libasound.so
 INC=-I/usr/local/arm/alsa/include
 
 all:cap play param pcminfo test
@@ -39,7 +39,7 @@ test.o: test.c
 	$(CC) $(INC) $(CC_FLAGS) -o $@ $<
 
 clean:
-	$(RM) cap.o audio
+	$(RM) cap.o cap
 	$(RM) play.o play
 	$(RM) param.o param
 	$(RM) pcminfo.o pcminfo
