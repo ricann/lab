@@ -1,16 +1,14 @@
+.PHONY: all clean
+.SILENT:
 
-CC=arm-none-linux-gnueabi-gcc
-CC_FLAGS = -g -c -Os -Wall
-LIBRARY = /usr/local/arm/alsa/lib/libasound.so
-INC=-I/usr/local/arm/alsa/include
+include make.h
 
-
-
-audio: audio.o $(LIBRARY)
-	$(CC) -o $@ audio.o $(LIBRARY) -lm -ldl -lpthread
-
-audio.o: audio.c
-	$(CC) $(INC) $(CC_FLAGS) -o $@ $<
+all: 
+	$(MAKE) -w -C $(AUDIO_BASE)/server
+	$(MAKE) -w -C $(AUDIO_BASE)/client
+	$(MAKE) -w -C $(AUDIO_BASE)/sample
 
 clean:
-	$(RM) audio.o audio
+	$(MAKE) -w -C $(AUDIO_BASE)/server clean
+	$(MAKE) -w -C $(AUDIO_BASE)/client clean
+	$(MAKE) -w -C $(AUDIO_BASE)/sample clean
