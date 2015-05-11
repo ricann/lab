@@ -13,7 +13,7 @@
 
 #include "alsa/asoundlib.h"
 
-#include "audioc.h"
+#include "mcastc.h"
 
 //socket variables
 char ip[32];
