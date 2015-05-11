@@ -1,5 +1,5 @@
-#ifndef __UDPTEST_S_H__
-#define __UDPTEST_S_H__
+#ifndef __AUDIOS_H__
+#define __AUDIOS_H__
 
 //socket
 #define IP_DEFAULT "10.103.242.187"
@@ -18,4 +18,4 @@ int init_alsa();
 int play_audio();
 
 
-#endif /* __UDPTEST_S_H__ */
+#endif /* __AUDIOS_H__ */

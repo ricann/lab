@@ -1,5 +1,5 @@
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#ifndef __AUDIOC_H__
+#define __AUDIOC_H__
 
 //socket
 #define IP_DEFAULT "10.103.242.187"
@@ -17,4 +17,4 @@ int init_sock();
 int init_alsa();
 int cap_audio();
 
-#endif /* __AUDIO_H__ */
+#endif /* __AUDIOC_H__ */
