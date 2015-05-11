@@ -1,6 +1,12 @@
 *.o
 tags
+cscope*
 audios
 audioc
 udpts
 udptc
+cap
+play
+param
+pcminfo
+test

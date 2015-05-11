@@ -1,1 +1,4 @@
 export AUDIO_BASE=`pwd`
+`ctags -R`
+`cscope -Rbq`
+export CODE_PATH=`pwd`
