@@ -9,13 +9,13 @@ INC=-I/usr/local/arm/alsa/include
 all: audios udpts
 
 audios: audios.o $(LIBRARY)
-	$(CC) -o $@ audios.o $(LIBRARY) -lm -ldl
+	$(CC) -o $@ audios.o $(LIBRARY) -lm -ldl -lpthread
 
 audios.o: audios.c
 	$(CC) $(INC) $(CC_FLAGS) -o $@ $<
 
 udpts: udpts.o $(LIBRARY)
-	$(CC) -o $@ udpts.o $(LIBRARY) -lm -ldl
+	$(CC) -o $@ udpts.o $(LIBRARY) -lm -ldl -lpthread
 
 udpts.o: udpts.c
 	$(CC) $(INC) $(CC_FLAGS) -o $@ $<
