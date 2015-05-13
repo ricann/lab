@@ -3,23 +3,21 @@
 #include <string.h>
 
 #include <unistd.h>
-#include <signal.h>
-#include <fcntl.h>
-
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
 
 #include "alsa/asoundlib.h"
 
-#include "audioc.h"
+#include "mcasts.h"
 
 //socket variables
-char ip[32];
-int port;
 int sockfd;
-struct sockaddr_in saddr;
+socklen_t sin_size;
+struct sockaddr_in my_addr;
+struct sockaddr_in ac_addr;
+
 
 //pcm variables
 snd_pcm_t *handle;
@@ -30,20 +28,8 @@ snd_pcm_uframes_t period_size = \
 int buf_frames = PCM_PERIODS * PCM_PERIOD_FRAMES;
 char data[PCM_PERIOD_FRAMES * PCM_CHANNELS * PCM_SAMPLE_SIZE];
 
-int main(int argc, char *argv[])
+int main()
 {
-	//init ip and port
-	if(argc == 3)
-	{
-		strncpy(ip, argv[1], strlen(argv[1]));
-		port = atoi(argv[2]);
-	}
-	else
-	{
-		strncpy(ip, IP_DEFAULT, strlen(IP_DEFAULT));
-		port = PORT_DEFAULT;
-	}
-
 	//init alsa, open device and set parameters
 	if(init_alsa() != 0)
 	{
@@ -57,7 +43,7 @@ int main(int argc, char *argv[])
 	}
 
 	//capture and transfer audio
-	if(cap_audio() != 0)
+	if(play_audio() != 0)
 	{
 		return -1;
 	}
@@ -67,20 +53,44 @@ int main(int argc, char *argv[])
 
 int init_sock()
 {
-	//socket init
+	int loop = 1;
+	int err = -1;
+	struct ip_mreq mreq;
+
+	//init socket
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	if(sockfd < 0)
+	if (sockfd < 0)
 	{
 		perror("Socket error");
-		return -1;
+		exit(1);
 	}
-	bzero(&saddr, sizeof(struct sockaddr_in));
-	saddr.sin_family = AF_INET;
-	saddr.sin_port = htons(port);
-	if(inet_aton(ip, &saddr.sin_addr) < 0)
+	bzero(&my_addr, sizeof(struct sockaddr_in));
+	my_addr.sin_family = AF_INET;
+	my_addr.sin_port = htons(MCAST_PORT);
+	my_addr.sin_addr.s_addr = INADDR_ANY;
+
+	if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(my_addr)) == -1)
 	{
-		perror("IP error");
-		return -1;
+	    perror("bind");
+	    exit(1);
+	}
+
+	//set loopback permission
+	err = setsockopt(sockfd,IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+	if(err < 0)
+	{
+		perror("setsockopt():IP_MULTICAST_LOOP");
+		exit(1);
+	}
+
+	//join into multicast group
+	mreq.imr_multiaddr.s_addr = inet_addr(MCAST_ADDR);
+	mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+	err = setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+	if (err < 0)
+	{
+		perror("setsockopt():IP_ADD_MEMBERSHIP");
+		exit(1);
 	}
 
 	return 0;
@@ -93,7 +103,7 @@ int init_alsa()
 
 
 	/* Open PCM device for recording (capture). */
-	rc = snd_pcm_open(&handle, PCM_NAME, SND_PCM_STREAM_CAPTURE, 0);
+	rc = snd_pcm_open(&handle, PCM_NAME, SND_PCM_STREAM_PLAYBACK, 0);
 	if (rc < 0) 
 	{
 		fprintf(stderr, "unable to open pcm device: %s\n", snd_strerror(rc));
@@ -187,31 +197,41 @@ int init_alsa()
 	return 0;
 }
 
-int cap_audio()
+int play_audio()
 {
-	int rc;
+	int ret;
 
 	while(1)
 	{
-		rc = snd_pcm_readi(handle, data, period_frames);
-		if (rc == -EPIPE) 
-		{
-			/* EPIPE means overrun */
-			fprintf(stderr, "overrun occurred\n");
-			snd_pcm_prepare(handle);
-		}
+		ret = recvfrom(sockfd, data, sizeof(data), 0, (struct sockaddr *)&ac_addr, &sin_size);
 
-		rc = sendto(sockfd, data, sizeof(data), 0, 
-			(struct sockaddr *)&saddr, sizeof(struct sockaddr_in));
-		if(rc == -1)
+		printf("Received datagram from %s:\n",inet_ntoa(ac_addr.sin_addr));
+		//printf("%s\n", buf);
+		if (ret == -1) 
 		{
-			perror("sendto error!");
+			perror ("recvfrom");
 			return -1;
+		}
+		   
+		ret = snd_pcm_writei(handle, data, period_frames);
+		if (ret == -EPIPE) 
+		{
+			/* EPIPE means underrun */
+			fprintf(stderr, "underrun occurred\n");
+			snd_pcm_prepare(handle);
+		} 
+		else if (ret < 0) 
+		{
+			fprintf(stderr, "error from writei: %s\n", snd_strerror(ret));
+		}  
+		else if (ret != (int)period_frames) 
+		{
+			fprintf(stderr, "short write, write %d period_frames\n", ret);
 		}
 	}
 
- 	snd_pcm_drain(handle);
+	snd_pcm_drain(handle);
 	snd_pcm_close(handle);
 
- 	return 0;
+	return 0;
 }

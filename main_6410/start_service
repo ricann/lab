@@ -2,6 +2,6 @@
 cd /main_6410
 ./init_config
 ./main_control_arm >> /dev/null &
-./version_20150414 -i 192.168.4.155 -t 128 -k 500 -c 4 -d 0 -g 20 >> /dev/null &
-cd /main_6410/bx
-./lua -g 4 -o 1 main.lua 1>/dev/null 2>&1 &
+./version_20150414 -i 11.22.33.44 -t 128 -k 500 -c 6 -d 0 -g 20 >> /dev/null &
+cd /main_6410/scalar
+./lua -g 6 -o 1 main.lua 1>/dev/null 2>&1 &
