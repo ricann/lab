@@ -4,6 +4,7 @@ NFS_CONF="nfs.sh"
 MAIN_CONF="configure"
 INIT_CONF="init_config"
 START_CONF="start_service"
+LUA_CONF="scalar/config.lua"
 
 if [ ! -n "$1" ] ;then
 	echo "please input a node number!"
@@ -48,3 +49,23 @@ echo "./version_20150414 -i $2 -t 128 -k 500 -c $1 -d 0 -g 20 >> /dev/null &" >>
 echo "cd /main_6410/scalar" >> ${START_CONF}
 echo "./lua -g $1 -o 1 main.lua 1>/dev/null 2>&1 &" >> ${START_CONF}
 
+# generate scalar/config.lua file
+echo 'Generating scalar/config.lua file...'
+echo 'SL_port =' > ${LUA_CONF}
+echo '{' >> ${LUA_CONF}
+echo '	PATH = "/dev/ttySAC3",  --串口路径,(Top6410: /dev/ttySAC3)' >> ${LUA_CONF}
+echo '	BAUD = 57600,           --波特率' >> ${LUA_CONF}
+echo '	DATA = 8,               --数据位数' >> ${LUA_CONF}
+echo '	PARI = 0,               --奇偶校验' >> ${LUA_CONF}
+echo '	STOP = 1                --停止位数' >> ${LUA_CONF}
+echo '}' >> ${LUA_CONF}
+echo '' >> ${LUA_CONF}
+echo '-------------------------------------------------------------' >> ${LUA_CONF}
+echo "BY_ADDR = \"$2\"" >> ${LUA_CONF}
+echo 'BY_PORT = "7777"' >> ${LUA_CONF}
+echo 'XD_ADDR = nil' >> ${LUA_CONF}
+echo 'XD_PORT = "7770"' >> ${LUA_CONF}
+echo '-------------------------------------------------------------' >> ${LUA_CONF}
+echo '' >> ${LUA_CONF}
+echo 'INTERVAL = 3' >> ${LUA_CONF}
+echo '' >> ${LUA_CONF}
