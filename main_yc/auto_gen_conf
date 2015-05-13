@@ -55,7 +55,7 @@ echo "AGENT_SERVER_PORT=9999" >> ${ROUTE_CONF}
 # generate start_service file
 echo "Generating start_service file..."
 echo "#!/bin/sh" > ${START_CONF}
-echo "./arm_control >> /dev/null &" >> ${START_CONF}
+echo "./arm_energy_v3 >> /dev/null &" >> ${START_CONF}
 echo "./arm_Route >> /dev/null &" >> ${START_CONF}
 echo "./camctrl -i $2 -c $1 >> /dev/null &" >> ${START_CONF}
 
