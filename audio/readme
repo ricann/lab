@@ -1,2 +1,9 @@
 Linux音频编程指南:
 http://www.ibm.com/developerworks/cn/linux/l-audio/
+
+使用下面命令播放： 采样16位，采样率44.1k，双通道的 PCM 音频数据
+ffplay -f s16le -ar 44100 -ac 2 cap.raw
+cap.raw为原始音频流文件
+
+使用下面命令转换文件格式：
+ffmpeg -i cap.raw -f cap.wav
