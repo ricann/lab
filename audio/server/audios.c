@@ -13,10 +13,15 @@
 #include "audios.h"
 
 //socket variables
+char ip[32];
+int port;
 int sockfd;
 socklen_t sin_size;
 struct sockaddr_in my_addr;
 struct sockaddr_in ac_addr;
+
+int sockfd_mcast;
+struct sockaddr_in mcast_addr;
 
 
 //pcm variables
@@ -38,6 +43,12 @@ int main()
 
 	//init socket
 	if(init_sock() != 0)
+	{
+		return -1;
+	}
+
+	//init multicast socket
+	if(init_mcast_sock() != 0)
 	{
 		return -1;
 	}
@@ -69,6 +80,36 @@ int init_sock()
 	{
 	    perror("bind");
 	    exit(1);
+	}
+
+	return 0;
+}
+
+int init_mcast_sock()
+{
+	int ret;
+
+	//init socket
+	sockfd_mcast = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd_mcast < 0)
+	{
+		perror("Socket error");
+		exit(1);
+	}
+	bzero(&mcast_addr, sizeof(struct sockaddr_in));
+	mcast_addr.sin_family = AF_INET;
+	mcast_addr.sin_port = htons(MCAST_PORT);
+	if (inet_aton(MCAST_IP, &mcast_addr.sin_addr) < 0)
+	{
+		perror("IP error");
+		return -1;
+	}
+
+	ret = connect(sockfd_mcast, (struct sockaddr *)&mcast_addr, sizeof(struct sockaddr_in));
+	if(ret == -1)
+	{
+	    perror("connect");
+	    return -1;
 	}
 
 	return 0;
@@ -177,24 +218,39 @@ int init_alsa()
 
 int play_audio()
 {
-	int ret;
+	int n, cnt, ret;
+
+	//every 10 udp datagrams, display one line info
+	cnt = 0;
 
 	while(1)
 	{
-		ret = recvfrom(sockfd, data, sizeof(data), 0, (struct sockaddr *)&ac_addr, &sin_size);
+		n = recvfrom(sockfd, data, sizeof(data), 0, 
+			(struct sockaddr *)&ac_addr, &sin_size);
 
-		printf("Received datagram from %s:\n",inet_ntoa(ac_addr.sin_addr));
-		//printf("%s\n", buf);
-		if (ret == -1) 
+		if (n == -1) 
 		{
 			perror ("recvfrom");
+			//return -1;
+		}
+
+		if(++cnt == 100)
+		{
+			printf("Received datagram from %s:\n",inet_ntoa(ac_addr.sin_addr));
+			cnt = 0;
+		}
+		
+		ret = write(sockfd_mcast, data, n);
+		if(ret == -1)
+		{
+			perror("write error!");
 			return -1;
 		}
-		   
+		
 		ret = snd_pcm_writei(handle, data, period_frames);
 		if (ret == -EPIPE) 
 		{
-			/* EPIPE means underrun */
+			//EPIPE means underrun
 			fprintf(stderr, "underrun occurred\n");
 			snd_pcm_prepare(handle);
 		} 
@@ -206,6 +262,7 @@ int play_audio()
 		{
 			fprintf(stderr, "short write, write %d period_frames\n", ret);
 		}
+		
 	}
 
 	snd_pcm_drain(handle);

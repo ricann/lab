@@ -19,7 +19,7 @@
 char ip[32];
 int port;
 int sockfd;
-struct sockaddr_in saddr;
+struct sockaddr_in daddr;
 
 //pcm variables
 snd_pcm_t *handle;
@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
 
 int init_sock()
 {
+	int ret;
+
 	//socket init
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sockfd < 0)
@@ -74,13 +76,20 @@ int init_sock()
 		perror("Socket error");
 		return -1;
 	}
-	bzero(&saddr, sizeof(struct sockaddr_in));
-	saddr.sin_family = AF_INET;
-	saddr.sin_port = htons(port);
-	if(inet_aton(ip, &saddr.sin_addr) < 0)
+	bzero(&daddr, sizeof(struct sockaddr_in));
+	daddr.sin_family = AF_INET;
+	daddr.sin_port = htons(port);
+	if(inet_aton(ip, &daddr.sin_addr) < 0)
 	{
 		perror("IP error");
 		return -1;
+	}
+
+	ret = connect(sockfd, (struct sockaddr *)&daddr, sizeof(struct sockaddr_in));
+	if(ret == -1)
+	{
+	    perror("connect");
+	    return -1;
 	}
 
 	return 0;
@@ -201,12 +210,15 @@ int cap_audio()
 			snd_pcm_prepare(handle);
 		}
 
+		/*
 		rc = sendto(sockfd, data, sizeof(data), 0, 
-			(struct sockaddr *)&saddr, sizeof(struct sockaddr_in));
+			(struct sockaddr *)&daddr, sizeof(struct sockaddr_in));
+		*/
+		rc = write(sockfd, data, sizeof(data));
 		if(rc == -1)
 		{
-			perror("sendto error!");
-			return -1;
+			perror("write error!");
+			//return -1;
 		}
 	}
 

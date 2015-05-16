@@ -76,7 +76,7 @@ int init_sock()
 	}
 
 	//set loopback permission
-	err = setsockopt(sockfd,IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+	err = setsockopt(sockfd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
 	if(err < 0)
 	{
 		perror("setsockopt():IP_MULTICAST_LOOP");
@@ -199,20 +199,26 @@ int init_alsa()
 
 int play_audio()
 {
-	int ret;
+	int cnt, ret;
+
+	//every 10 udp datagrams, display one line info
+	cnt = 0;
 
 	while(1)
 	{
 		ret = recvfrom(sockfd, data, sizeof(data), 0, (struct sockaddr *)&ac_addr, &sin_size);
-
-		printf("Received datagram from %s:\n",inet_ntoa(ac_addr.sin_addr));
-		//printf("%s\n", buf);
 		if (ret == -1) 
 		{
 			perror ("recvfrom");
 			return -1;
 		}
-		   
+
+		if(++cnt == 100)
+		{
+			printf("Received datagram from %s:\n",inet_ntoa(ac_addr.sin_addr));
+			cnt = 0;
+		}
+
 		ret = snd_pcm_writei(handle, data, period_frames);
 		if (ret == -EPIPE) 
 		{
