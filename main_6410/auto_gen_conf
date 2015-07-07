@@ -40,13 +40,14 @@ echo "ifconfig eth0 192.168.$1.2 netmask 255.255.255.0" >> ${INIT_CONF}
 echo "route add default gw 192.168.$1.1" >> ${INIT_CONF}
 
 # generate start_service file
+cur_path=`pwd`
 echo "Generating start_service file..."
 echo "#!/bin/sh" > ${START_CONF}
-echo "cd /main_6410" >> ${START_CONF}
+echo "cd ${cur_path}" >> ${START_CONF}
 echo "./init_config" >> ${START_CONF}
 echo "./main_control_arm >> /dev/null &" >> ${START_CONF}
 echo "./version_20150414 -i $2 -t 128 -k 500 -c $1 -d 0 -g 20 >> /dev/null &" >> ${START_CONF}
-echo "cd /main_6410/scalar" >> ${START_CONF}
+echo "cd ${cur_path}/scalar" >> ${START_CONF}
 echo "./lua -g $1 -o 1 main.lua 1>/dev/null 2>&1 &" >> ${START_CONF}
 
 # generate scalar/config.lua file

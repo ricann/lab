@@ -1,7 +1,7 @@
 #!/bin/sh
-cd /main_6410
+cd /Users/ricann/git/github/lab/main_6410
 ./init_config
 ./main_control_arm >> /dev/null &
 ./version_20150414 -i 11.22.33.44 -t 128 -k 500 -c 6 -d 0 -g 20 >> /dev/null &
-cd /main_6410/scalar
+cd /Users/ricann/git/github/lab/main_6410/scalar
 ./lua -g 6 -o 1 main.lua 1>/dev/null 2>&1 &
