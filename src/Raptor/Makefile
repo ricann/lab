@@ -6,7 +6,7 @@ DEPENDENCY = def.h   \
              matrix.h  \
              raptorcode.h
 
-CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
+CC = arm-none-linux-gnueabi-gcc 
 CFLAGS =-g -c -lm -Os -Wall -std=gnu99
 INC = -I../Common
 
