@@ -25,15 +25,15 @@ endif
 
 TARGET = app
 
-$(TARGET): $(OBJECTS)
+$(TARGET) : $(OBJECTS)
 		#$(CC) -o $(TARGET) $(OBJECTS)
 
-.c.o:
-	$(CC) $(INC) $(CFLAGS) $<
+.c.o :
+		$(CC) $(INC) $(CFLAGS) $<
 
-clean:
-	rm -rf $(OBJECTS) $(TARGET) core
+clean :
+		rm -rf $(OBJECTS) $(TARGET) core
 
-performance.o: $(DEPENDENCY) performance.c
-LogMsg.o: $(DEPENDENCY) LogMsg.c
+performance.o : $(DEPENDENCY) performance.c
+LogMsg.o : $(DEPENDENCY) LogMsg.c
 

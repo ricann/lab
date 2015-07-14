@@ -1,6 +1,6 @@
 #ifndef __SAMSUNG_SYSLSI_APDEV_CAM_ENCODING_TEST_H__
 #define __SAMSUNG_SYSLSI_APDEV_CAM_ENCODING_TEST_H__
-// #include "alsa/asoundlib.h"
+#include "alsa/asoundlib.h"
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>
@@ -28,7 +28,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <sys/types.h>
+#include <termios.h>
+
 #include <sys/un.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -50,6 +51,12 @@
 #include "SsbSipMpeg4Decode.h"
 #include "SsbSipVC1Decode.h"
 
+#include "cv.h"
+#include "cxcore.h"
+#include "cvaux.h"
+#include "highgui.h"
+
+
 extern "C"{
 	#include "raptorcode.h"
 }
@@ -67,12 +74,18 @@ extern "C"{
 #define WITH_AUDIO_DEFAULT 0  //WITH_AUDIO
 #define WITH_PREVIEW_DEFAULT 0  //NO_PREVIEW
 #define WITH_MULTI_DESCRIPTION 0 //NO_MULTI_DESCRIPTION
+#define KEEP_ALIVE_DEFAULT 60
 #define FRAGMENT_SIZE_DEFAULT 5000 
 #define WITH_LOCAL_DEFAULT 0
+#define DETECT_RATE_DEFAULT 5
+#define SEND_RATE_DEFAULT 2
 #define WITH_FB_DEFAULT 0
 #define WITH_FEC_DEFAULT 1
 #define T_INIT_DEFAULT 128
-
+#define M_IP "11.0.0.109"
+#define TIME_OUT_FRAME 40
+#define TIME_OUT_FRAME_EIGHTH 5
+#define COLOR_CHN 1
 
 #define PORT_V 8888
 #define PORT_A 5555
@@ -109,6 +122,7 @@ static void mfc_encoder_free(void *);
 //static int extract_nal(char *, int, void *);
 //static void audio_thread();
 static void* video_thread(void*);
+static void *detect_thread(void *arg);
 static void* video_send_thread(void*);
 static void* keep_linked_thread(void*);
 //static void get_fb_thread();
@@ -118,6 +132,14 @@ static void exit_from_app();
 //static void set_alsa_params();
 static void ctrl_c(int);
 
+bool ptInPolygon(CvPoint** ptx,int t,CvPoint pt);
+void DetectIncursion(IplImage* img,IplImage* bg, CvPoint** ptx, int t);
+int direction( CvPoint p1,CvPoint p2,CvPoint p );
+int on_segment(CvPoint p1,CvPoint p2,CvPoint p) ;
+bool judge(CvPoint p1,CvPoint p2,CvPoint p3,CvPoint p4)  ;
+bool rectandLine(CvPoint** ptx, CvPoint q1,CvPoint q2,CvPoint q3,CvPoint q4);
+void crossLine(IplImage* img,IplImage* bg, CvPoint** ptx);
+int findmotion( IplImage* img, IplImage* copyimg, IplImage* bg );
 //将C++代码以标准C形式输出（即以C的形式被调用）
 #ifdef __cplusplus
 extern "C" {

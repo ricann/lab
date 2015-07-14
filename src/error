@@ -1,0 +1,12 @@
+In file included from /nfsboot/usr/share/arm-alsa/include/alsa/asoundlib.h:51,
+                 from main.c:10:
+/nfsboot/usr/share/arm-alsa/include/alsa/timer.h:104: error: field 'tstamp' has incomplete type
+In file included from main.c:16:
+./g729a_src/g729a/basic_op.h:34: warning: conflicting types for built-in function 'round'
+main.c: In function 'video_thread':
+main.c:515: warning: passing argument 2 of 'signal' from incompatible pointer type
+main.c:541: warning: implicit declaration of function 'bzero'
+main.c:597: warning: pointer targets in passing argument 1 of 'extract_nal' differ in signedness
+main.c: In function 'audio_thread':
+main.c:695: warning: implicit declaration of function 'inet_aton'
+make: *** [main.o] 错误 1
