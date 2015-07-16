@@ -21,7 +21,7 @@ OBJECTS = ./main.o						\
 		  ./Raptor/matrix.o     
 
 
-LIBRARY = /usr/local/arm/alsa/lib/libasound.so
+LIBRARY = ../lib/libasound.so
 
 CC = arm-none-linux-gnueabi-g++ 
 

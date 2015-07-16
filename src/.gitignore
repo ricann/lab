@@ -16,8 +16,6 @@
 
 # Shared objects (inc. Windows DLLs)
 *.dll
-*.so
-*.so.*
 *.dylib
 
 # Executables
@@ -27,3 +25,7 @@
 *.i*86
 *.x86_64
 *.hex
+
+#temporary files
+*.swp
+multimedia_test
