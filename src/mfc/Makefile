@@ -15,7 +15,7 @@ DEPENDENCY = SsbSipH264Decode.h		\
 
 CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
 CFLAGS = -g -c -Os -Wall
-INC = -I../Common
+INC = -I../common
 #COMPILER_NEW = y
 ifdef COMPILER_NEW
 CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
