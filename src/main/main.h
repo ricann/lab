@@ -1,6 +1,6 @@
 #ifndef __SAMSUNG_SYSLSI_APDEV_CAM_ENCODING_TEST_H__
 #define __SAMSUNG_SYSLSI_APDEV_CAM_ENCODING_TEST_H__
-#include "../alsa/asoundlib.h"
+#include "asoundlib.h"
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>

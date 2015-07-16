@@ -30,7 +30,7 @@ INC = -I../common 	\
 	  -I../frame 	\
 	  -I../mfc		\
 	  -I../raptor 	\
-	  -I/usr/share/arm-alsa/include  \
+	  -I../../inc/alsa 	\
 	  -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/include/opencv
 
 TARGET = multimedia_test
