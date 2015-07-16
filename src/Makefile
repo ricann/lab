@@ -9,7 +9,6 @@ OBJECTS = ./main.o						\
 		  ./FrameExtractor/H264Frames.o		\
 		  ./FrameExtractor/MPEG4Frames.o	\
 		  ./FrameExtractor/VC1Frames.o		\
-		  ./JPEG_API/JPGApi.o			\
 		  ./MFC_API/SsbSipH264Decode.o	\
 		  ./MFC_API/SsbSipH264Encode.o	\
 		  ./MFC_API/SsbSipMfcDecode.o	\
@@ -21,78 +20,22 @@ OBJECTS = ./main.o						\
 		  ./Raptor/raptorcode.o		\
 		  ./Raptor/matrix.o     
 
-SRCS =    ./main.cpp   				\
-		  ./Common/performance.c		\
-		  ./Common/LogMsg.c			\
-		  ./FrameExtractor/FileRead.c 		\
-	  	  ./FrameExtractor/FrameExtractor.c 	\
-		  ./FrameExtractor/H263Frames.c		\
-		  ./FrameExtractor/H264Frames.c		\
-		  ./FrameExtractor/MPEG4Frames.c	\
-		  ./FrameExtractor/VC1Frames.c		\
-		  ./JPEG_API/JPGApi.c			\
-		  ./MFC_API/SsbSipH264Decode.c	\
-		  ./MFC_API/SsbSipH264Encode.c	\
-		  ./MFC_API/SsbSipMfcDecode.c	\
-		  ./MFC_API/SsbSipMpeg4Decode.c	\
-		  ./MFC_API/SsbSipMpeg4Encode.c	\
-		  ./MFC_API/SsbSipVC1Decode.c   \
-		  ./CharSet.cpp            \
-		  ./YUVOSDMixer.cpp        \
-		  ./Raptor/raptorcode.c          \
-		  ./Raptor/matrix.c          
-		  
-
-#SRCS = $(OBJECTS:.o=.c)#和“$(patsubst %.o,%.c,$(objects))”是一样的,patsubst模式字符串替换函数
-DEPENDENCY = ./Common/lcd.h 			\
-		     ./Common/LogMsg.h 			\
-		     ./Common/mfc.h 			\
-		     ./Common/MfcDriver.h 		\
-		     ./Common/MfcDrvParams.h 	\
-		     ./Common/performance.h 	\
-			 ./Common/post.h			\
-			 ./Common/videodev2.h		\
-			 ./Common/videodev2_s3c.h	\
-			 ./Common/videodev2_s3c_tv.h	\
-			 ./FrameExtractor/FileRead.h 		\
-		     ./FrameExtractor/FrameExtractor.h 	\
-		     ./FrameExtractor/H263Frames.h 		\
-		     ./FrameExtractor/H264Frames.h 		\
-		     ./FrameExtractor/MPEG4Frames.h 	\
-		     ./FrameExtractor/VC1Frames.h 		\
-			 ./JPEG_APIJPGApi.h					\
-			 ./MFC_API/SsbSipH264Decode.h		\
-		     ./MFC_API/SsbSipH264Encode.h		\
-		     ./MFC_API/SsbSipMfcDecode.h		\
-		     ./MFC_API/SsbSipMpeg4Decode.h		\
-		     ./MFC_API/SsbSipMpeg4Encode.h		\
-		     ./MFC_API/SsbSipVC1Decode.h		\
-		     ./CharSet.h             \
-		     ./YUVOSDMixer.h         \
-		     ./myHead.h              \
-		     ./YUVOSDMixerT.h        \
-			 ./Raptor/raptorcode.h   \
-			 ./Raptor/matrix.h       \
-	  		 ./main.h							
 
 LIBRARY = /usr/local/arm/alsa/lib/libasound.so
 
 CC = arm-none-linux-gnueabi-g++ 
 
 CFLAGS = -g -c -Os -Wall -DLCD_SIZE_43 
-INC = -I./Common -I./FrameExtractor -I./MFC_API -I./JPEG_API -I/usr/share/arm-alsa/include  -I./Raptor -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/include/opencv
+INC = -I./Common -I./FrameExtractor -I./MFC_API  -I/usr/share/arm-alsa/include  -I./Raptor -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/include/opencv
 
 TARGET = multimedia_test
 
-all : common frame_extractor jpeg_api mfc_api raptor multimedia_test
+all : common frame_extractor  mfc_api raptor multimedia_test
 common : 
 		cd Common; $(MAKE)
 
 frame_extractor : 
 		cd FrameExtractor; $(MAKE)
-
-jpeg_api : 
-		cd JPEG_API; $(MAKE)
 
 mfc_api : 
 		cd MFC_API; $(MAKE)
@@ -101,7 +44,7 @@ raptor :
 		cd Raptor; $(MAKE)
 
 $(TARGET) : $(OBJECTS) $(LIBRARY)
-		$(CC) $(OBJECTS) $(LIBRARY) -L/usr/local/arm/4.3.2/arm-none-linux-gnueabi/lib -lcv -lcxcore -lrt -lcvaux -lm -lpng -ljpeg -lz -lml -lhighgui -ldl -lpthread -o$(TARGET)
+		$(CC) $(OBJECTS) $(LIBRARY) -L/usr/local/arm/4.3.2/arm-none-linux-gnueabi/lib -lcv -lcxcore -lz -lpthread -o$(TARGET)
 #规则表示所有的 .o文件都是依赖与相应的.c文件的
 .c.o :
 		$(CC) $(INC) $(CFLAGS) $<
