@@ -9,7 +9,7 @@ _COMMON_OBJ_DIR	:= $(COMMON_OBJ_DIR)
 endif
 
 $(COMMON_TARGET): $(COMMON_OBJ_DIR) $(COMMON_OBJ)
-	$(AR) -r $@  $(COMMON_OBJ)
+	@$(AR) -r $@  $(COMMON_OBJ)
 
 ifneq ($(MAKECMDGOALS), clean)
 sinclude $(COMMON_DEP)
@@ -19,7 +19,7 @@ $(COMMON_OBJ_DIR):
 	$(MKDIR) $(MKDIR_FLAGS) $@
 
 $(COMMON_OBJ_DIR)/%.o: $(COMMON_SRC_DIR)/%.c
-	$(CC) -o $@  $(COMMON_CFLAGS) $(filter %.c, $^)
+	@$(CC) -o $@  $(COMMON_CFLAGS) $(filter %.c, $^)
 
 $(COMMON_OBJ_DIR)/%.dep: $(_COMMON_OBJ_DIR) $(COMMON_SRC_DIR)/%.c
 	@set -e ; \
@@ -27,10 +27,10 @@ $(COMMON_OBJ_DIR)/%.dep: $(_COMMON_OBJ_DIR) $(COMMON_SRC_DIR)/%.c
 	$(CC) $(COMMON_CFLAGS) -E -MM $(filter %.c, $^) > $@.tmp ; \
 	sed 's,\(.*\)\.o[ :]*,objs/\1.o $@: ,g' < $@.tmp > $@ ; \
 	$(RM) -fr $@.tmp
+
 clean:
 	@echo "Cleaning dhcp auto config object files"
-	$(RM) $(RM_FLAGS) $(COMMON_RMS)
-	$(RM) -rf $(COMMON_OBJ_DIR)
+	$(RM) -rf $(COMMON_RMS)
 	$(RM) $(RM_FLAGS) $(COMMON_TARGET)
 
 print:
