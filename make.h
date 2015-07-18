@@ -1,9 +1,10 @@
 #---------------compile related--------
-CC = echo $(notdir $<);arm-none-linux-gnueabi-gcc
-CCPP = echo $(notdir $<);arm-none-linux-gnueabi-g++
-AS = as
-AR = echo $(notdir $<);arm-none-linux-gnueabi-ar
-LD = echo $(notdir $@);arm-none-linux-gnueabi-ld
+CC = @echo $(notdir $<);arm-none-linux-gnueabi-gcc
+CC_NO_ECHO = arm-none-linux-gnueabi-gcc
+CCPP = @echo $(notdir $<);arm-none-linux-gnueabi-g++
+AR = @echo $@;arm-none-linux-gnueabi-ar
+AS = @echo $(notdir $@);arm-none-linux-gnueabi-as
+LD = @echo $(notdir $@);arm-none-linux-gnueabi-ld
 RM = rm
 MAKE = make
 MKDIR = mkdir
