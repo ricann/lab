@@ -1,44 +1,43 @@
-OBJECTS = SsbSipH264Decode.o	\
-		  SsbSipH264Encode.o	\
-		  SsbSipMfcDecode.o		\
-		  SsbSipMpeg4Decode.o	\
-		  SsbSipMpeg4Encode.o	\
-		  SsbSipVC1Decode.o	
+.PHONY: all clean
 
-SRCS = $(OBJECTS:.o=.c)
-DEPENDENCY = SsbSipH264Decode.h		\
-		     SsbSipH264Encode.h		\
-		     SsbSipMfcDecode.h		\
-		     SsbSipMpeg4Decode.h	\
-		     SsbSipMpeg4Encode.h	\
-		     SsbSipVC1Decode.h	
+include ../../make.h
+include make.h
 
-CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
-CFLAGS = -g -c -Os -Wall
-INC = -I../common
-#COMPILER_NEW = y
-ifdef COMPILER_NEW
-CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
-else
-#CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
+
+$(MFC_TARGET): $(MFC_OBJ)
+	$(AR) rc $@ $^
+
+#define compile rules
+%.o: %.c
+	$(CC) $(MFC_CFLAGS) $(MFC_INC) $< -o $@
+
+ifneq ($(MAKECMDGOALS), clean)
+sinclude $(MFC_DEP)
 endif
 
+$(MFC_OBJ_DIR)/%.dep: $(MFC_SRC_DIR)/%.c
+	@set -e ; \
+	$(RM) -fr $@.tmp ; \
+	$(CC_NO_ECHO) $(MFC_CFLAGS) $(MFC_INC) -E -MM $(filter %.c, $^) > $@.tmp ; \
+	sed 's,\($*\)\.o[ :]*,obj/\1.o $@: ,g' < $@.tmp > $@ ; \
+	$(RM) -fr $@.tmp
 
-TARGET = app
+clean:
+	@echo "Cleaning dhcp auto config object files"
+	$(RM) -f *.o
+	$(RM) -f *.dep
+	$(RM) -f $(MFC_TARGET)
 
-$(TARGET) : $(OBJECTS)
-		#$(CC) -o $(TARGET) $(OBJECTS)
-
-.c.o :
-		$(CC) $(INC) $(CFLAGS) $<
-
-clean :
-		rm -rf $(OBJECTS) $(TARGET) core
-
-SsbSipH264Decode.o : $(DEPENDENCY) SsbSipH264Decode.c
-SsbSipH264Encode.o : $(DEPENDENCY) SsbSipH264Encode.c
-SsbSipMfcDecode.o : $(DEPENDENCY) SsbSipMfcDecode.c
-SsbSipMpeg4Decode.o : $(DEPENDENCY) SsbSipMpeg4Decode.c
-SsbSipMpeg4Encode.o : $(DEPENDENCY) SsbSipMpeg4Encode.c
-SsbSipVC1Decode.o : $(DEPENDENCY) SsbSipVC1Decode.c
+print:
+	@echo MFC_INC_DIR=${MFC_INC_DIR}
+	@echo MFC_SRC_DIR=${MFC_SRC_DIR}
+	@echo MFC_OBJ_DIR=${MFC_OBJ_DIR}
+	@echo _MFC_OBJ_DIR=${_MFC_OBJ_DIR}
+	@echo MFC_DIRS=${MFC_DIRS}
+	@echo MFC_RMS=${MFC_RMS}
+	@echo MFC_SRC=${MFC_SRC}
+	@echo MFC_OBJ=${MFC_OBJ}
+	@echo MFC_DEP=${MFC_DEP}
+	@echo MFC_INC=${MFC_INC}
+	@echo MFC_CFLAGS=${MFC_CFLAGS}
 
