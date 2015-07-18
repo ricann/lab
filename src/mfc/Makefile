@@ -19,7 +19,7 @@ $(MFC_OBJ_DIR)/%.dep: $(MFC_SRC_DIR)/%.c
 	@set -e ; \
 	$(RM) -fr $@.tmp ; \
 	$(CC_NO_ECHO) $(MFC_CFLAGS) $(MFC_INC) -E -MM $(filter %.c, $^) > $@.tmp ; \
-	sed 's,\($*\)\.o[ :]*,obj/\1.o $@: ,g' < $@.tmp > $@ ; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@: ,g' < $@.tmp > $@ ; \
 	$(RM) -fr $@.tmp
 
 clean:

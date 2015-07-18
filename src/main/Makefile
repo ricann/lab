@@ -19,7 +19,7 @@ $(MAIN_OBJ_DIR)/%.dep: $(MAIN_SRC_DIR)/%.cpp
 	@set -e ; \
 	$(RM) -fr $@.tmp ; \
 	$(CCPP_NO_ECHO) $(MAIN_CFLAGS) $(MAIN_INC) -E -MM $(filter %.cpp, $^) > $@.tmp ; \
-	sed 's,\($*\)\.o[ :]*,obj/\1.o $@: ,g' < $@.tmp > $@ ; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@: ,g' < $@.tmp > $@ ; \
 	$(RM) -fr $@.tmp
 
 clean:
