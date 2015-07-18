@@ -1,45 +1,39 @@
+.PHONY: all clean
 
-OBJECTS = FileRead.o 		\
-	  	  FrameExtractor.o 	\
-		  H263Frames.o		\
-		  H264Frames.o		\
-		  MPEG4Frames.o		\
-		  VC1Frames.o
+include ../../make.h
+include make.h
 
-SRCS = $(OBJECTS:.o=.c)
-DEPENDENCY = FileRead.h 		\
-		     FrameExtractor.h 	\
-		     H263Frames.h 		\
-		     H264Frames.h 		\
-		     MPEG4Frames.h 		\
-		     VC1Frames.h 		
 
-CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
-CFLAGS = -g -c -Os -Wall
-INC = -I../Common
+$(FRAME_TARGET): $(FRAME_OBJ)
+	$(AR) rc $@ $^
 
-#COMPILER_NEW = y 
-ifdef COMPILER_NEW
-CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
-else 
-#CC = /usr/local/arm/4.3.2/bin/arm-linux-gcc-4.3.2
+ifneq ($(MAKECMDGOALS), clean)
+sinclude $(FRAME_DEP)
 endif
 
-TARGET = app
+$(FRAME_OBJ_DIR)/%.dep: $(FRAME_SRC_DIR)/%.c
+	@set -e ; \
+	$(RM) -fr $@.tmp ; \
+	$(CC_NO_ECHO) -E -MM -g -w $(filter %.c, $^) > $@.tmp ; \
+	sed 's,\($*\)\.o[ :]*,obj/\1.o $@: ,g' < $@.tmp > $@ ; \
+	$(RM) -fr $@.tmp
 
-$(TARGET) : $(OBJECTS)
-		#$(CC) -o $(TARGET) $(OBJECTS)
+clean:
+	@echo "Cleaning dhcp auto config object files"
+	$(RM) -f *.o
+	$(RM) -f *.dep
+	$(RM) -f $(FRAME_TARGET)
 
-.c.o :
-		$(CC) $(INC) $(CFLAGS) $<
-
-clean :
-		rm -rf $(OBJECTS) $(TARGET) core
-
-FileRead.o : $(DEPENDENCY) FileRead.c
-FrameExtractor.o : $(DEPENDENCY) FrameExtractor.c
-H263Frames.o : $(DEPENDENCY) H263Frames.c
-H264Frames.o : $(DEPENDENCY) H264Frames.c
-MPEG4Frames.o : $(DEPENDENCY) MPEG4Frames.c
-VC1Frames.o : $(DEPENDENCY) VC1Frames.c
+print:
+	@echo FRAME_INC_DIR=${FRAME_INC_DIR}
+	@echo FRAME_SRC_DIR=${FRAME_SRC_DIR}
+	@echo FRAME_OBJ_DIR=${FRAME_OBJ_DIR}
+	@echo _FRAME_OBJ_DIR=${_FRAME_OBJ_DIR}
+	@echo FRAME_DIRS=${FRAME_DIRS}
+	@echo FRAME_RMS=${FRAME_RMS}
+	@echo FRAME_SRC=${FRAME_SRC}
+	@echo FRAME_OBJ=${FRAME_OBJ}
+	@echo FRAME_DEP=${FRAME_DEP}
+	@echo FRAME_INC=${FRAME_INC}
+	@echo FRAME_CFLAGS=${FRAME_CFLAGS}
 

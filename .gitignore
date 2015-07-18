@@ -28,4 +28,5 @@
 
 #temporary files
 *.swp
+*.dep
 video_demo
