@@ -27,7 +27,7 @@ MAIN_LIB = $(LIB_BASE)/libasound.so \
 			$(LIB_BASE)/libmfc.a	\
 			$(LIB_BASE)/libraptor.a	
 
-MAIN_LIB_PATH	= $(ARM_LIB_BASE)
+MAIN_LIB_PATH	= -L$(ARM_LIB_BASE)
 
 MAIN_CFLAGS		= $(CFLAGS) 
 

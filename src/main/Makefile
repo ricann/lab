@@ -5,7 +5,7 @@ include make.h
 
 
 $(MAIN_TARGET): $(MAIN_OBJ) $(MAIN_LIB)
-	$(CCPP_LD) -L$(ARM_LIB_BASE) $(MAIN_LDFLAGS) $^ -o $@ 
+	$(CCPP_LD) $(MAIN_LIB_PATH) $(MAIN_LDFLAGS) $^ -o $@ 
 
 #define compile rules
 %.o: %.cpp
