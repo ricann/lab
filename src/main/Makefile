@@ -1,43 +1,46 @@
+.PHONY: all clean
+
 include ../../make.h
-
-OBJECTS = ./main.o						\
-		  ../common/performance.o		\
-		  ../common/LogMsg.o				\
-		  ../frame/FileRead.o 		\
-		  ../frame/FrameExtractor.o 	\
-		  ../frame/H263Frames.o		\
-		  ../frame/H264Frames.o		\
-		  ../frame/MPEG4Frames.o	\
-		  ../frame/VC1Frames.o		\
-		  ../mfc/SsbSipH264Decode.o	\
-		  ../mfc/SsbSipH264Encode.o	\
-		  ../mfc/SsbSipMfcDecode.o	\
-		  ../mfc/SsbSipMpeg4Decode.o	\
-		  ../mfc/SsbSipMpeg4Encode.o	\
-		  ../mfc/SsbSipVC1Decode.o \
-		  ./CharSet.o            \
-		  ./YUVOSDMixer.o        \
-		  ../raptor/raptorcode.o		\
-		  ../raptor/matrix.o     
+include make.h
 
 
-LIBRARY = ../../lib/libasound.so
+$(MAIN_TARGET): $(MAIN_OBJ) $(MAIN_LIB)
+	$(CCPP_LD) -L$(ARM_LIB_BASE) $(MAIN_LDFLAGS) $^ -o $@ 
 
-INC = -I../common 	\
-	  -I../frame 	\
-	  -I../mfc		\
-	  -I../raptor 	\
-	  -I../../inc/alsa 	\
-	  -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/include/opencv
+#define compile rules
+%.o: %.cpp
+	$(CCPP) $(MAIN_CFLAGS) $(MAIN_INC) $< -o $@
 
-video_demo : $(OBJECTS) $(LIBRARY)
-		$(CCPP) $(OBJECTS) $(LIBRARY) -L/usr/local/arm/4.3.2/arm-none-linux-gnueabi/lib -lcv -lcxcore -lz -lpthread -ovideo_demo
+ifneq ($(MAKECMDGOALS), clean)
+sinclude $(MAIN_DEP)
+endif
 
-.c.o :
-		$(CCPP) $(INC) $(CFLAGS) $<
-.cpp.o :
-		$(CCPP) $(INC) $(CFLAGS) $<
+$(MAIN_OBJ_DIR)/%.dep: $(MAIN_SRC_DIR)/%.cpp
+	@set -e ; \
+	$(RM) -fr $@.tmp ; \
+	$(CCPP_NO_ECHO) $(MAIN_CFLAGS) $(MAIN_INC) -E -MM $(filter %.cpp, $^) > $@.tmp ; \
+	sed 's,\($*\)\.o[ :]*,obj/\1.o $@: ,g' < $@.tmp > $@ ; \
+	$(RM) -fr $@.tmp
 
-clean :
-		rm -rf *.o video_demo
+clean:
+	@echo "Cleaning dhcp auto config object files"
+	$(RM) -f *.o
+	$(RM) -f *.dep
+	$(RM) -f $(MAIN_TARGET)
+
+print:
+	@echo MAIN_TARGET=${MAIN_TARGET}
+	@echo MAIN_INC_DIR=${MAIN_INC_DIR}
+	@echo MAIN_SRC_DIR=${MAIN_SRC_DIR}
+	@echo MAIN_OBJ_DIR=${MAIN_OBJ_DIR}
+	@echo _MAIN_OBJ_DIR=${_MAIN_OBJ_DIR}
+	@echo MAIN_DIRS=${MAIN_DIRS}
+	@echo MAIN_RMS=${MAIN_RMS}
+	@echo MAIN_SRC=${MAIN_SRC}
+	@echo MAIN_OBJ=${MAIN_OBJ}
+	@echo MAIN_DEP=${MAIN_DEP}
+	@echo MAIN_INC=${MAIN_INC}
+	@echo MAIN_CFLAGS=${MAIN_CFLAGS}
+	@echo MAIN_LDFLAGS=${MAIN_LDFLAGS}
+	@echo ARM_LIB_BASE=${ARM_LIB_BASE}
 

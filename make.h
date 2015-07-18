@@ -2,9 +2,11 @@
 CC = @echo $(notdir $<);arm-none-linux-gnueabi-gcc
 CC_NO_ECHO = arm-none-linux-gnueabi-gcc
 CCPP = @echo $(notdir $<);arm-none-linux-gnueabi-g++
+CCPP_LD = @echo $@;arm-none-linux-gnueabi-g++
+CCPP_NO_ECHO = arm-none-linux-gnueabi-g++
 AR = @echo $@;arm-none-linux-gnueabi-ar
 AS = @echo $(notdir $@);arm-none-linux-gnueabi-as
-LD = @echo $(notdir $@);arm-none-linux-gnueabi-ld
+LD = @echo $@;arm-none-linux-gnueabi-ld
 RM = rm
 MAKE = make
 MKDIR = mkdir
@@ -19,6 +21,7 @@ MKDIR_FLAGS =
 
 #--------system dir-------------------
 ARM_INC_BASE = /usr/local/arm/4.3.2/arm-none-linux-gnueabi/include
+ARM_LIB_BASE = /usr/local/arm/4.3.2/arm-none-linux-gnueabi/lib
 ARM_OPENCV_BASE = $(ARM_INC_BASE)/opencv
 
 #--------1st level dir----------------
