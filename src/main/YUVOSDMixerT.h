@@ -282,8 +282,7 @@ public:
 	{
 		LPBYTE pBase = pBuffer + ((dwPitch * rtMask.top + rtMask.left) << dwShift);
 
-		DWORD dwMaskWidth = ((rtMask.right > dwPitch) ? dwPitch : rtMask.right) - rtMask.left;
-		DWORD dwMaskHeight= ((rtMask.bottom > dwHeight) ? dwHeight : rtMask.bottom) - rtMask.top;
+		DWORD dwMaskWidth = (((DWORD)rtMask.right > dwPitch) ? dwPitch : (DWORD)rtMask.right) - (DWORD)rtMask.left;
 
 		for (LONG j=rtMask.top; j<rtMask.bottom; ++j) {
 			FillMemory(pBase, dwMaskWidth << dwShift, 0x7F);
@@ -296,7 +295,7 @@ private:
 	{
 		static LPSTR pszWeekcTxt[] = 
 		{
-			"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", 
+			(LPSTR)"Sun", (LPSTR)"Mon", (LPSTR)"Tue", (LPSTR)"Wed", (LPSTR)"Thu", (LPSTR)"Fri", (LPSTR)"Sat", 
 		};
 
 		if (pszTime == NULL || nBufferSize == 0 || pInputFormat == NULL || pTMTime == 0) {

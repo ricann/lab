@@ -21,7 +21,7 @@
 #define SERVER2_FILE "server2_socket"
 //#define YUV_NO_MAX 50000
 
-void clean_up(int, char*);
+void clean_up(int, const char*);
 
 /*global variable*/
 static int cam_p_fp = -1;
@@ -190,19 +190,16 @@ int main(int argc, char **argv){
 
 	*****************************/
 	//socket AF_UNIX for video_thread
-	int orig_sock, serv_len;
+	int orig_sock;
 	static struct sockaddr_un clnt_adr, serv_adr;
 	static char client_file[18];
 	int reuse_addr, bufsize_addr, bufsize_len;
 	//unsigned char *c_p;
 	
 	//socket AF_UNIX for detect_thread
-	int orig_d_sock, serv_d_len;
-	static struct sockaddr_un clnt_d_adr, serv_d_adr;
-	static char client_d_file[20];
-	int reuse2_addr, bufsize2_addr, bufsize2_len;
+	int bufsize2_addr, bufsize2_len;
 	
-	int orig2_sock, serv2_len;
+	int orig2_sock;
 	static struct sockaddr_un clnt2_adr, serv2_adr;
 	static char client2_file[19];	
 	
@@ -388,7 +385,7 @@ int main(int argc, char **argv){
 	yuv_gray_frame_buf_half_size = yuv_gray_frame_buf_size/2;
 	
 	g_yuv = (unsigned char*)malloc(yuv_frame_buf_size*sizeof(unsigned char));
-	printf("main_thread : g_yuv : %d\n", g_yuv);
+	printf("main_thread : g_yuv : %p\n", g_yuv);
 
 	sendq = (char*)malloc((T_MAX+sizeof(Frame_header))*20);
 	savedata = getdata = 0;
@@ -717,7 +714,9 @@ static void* video_thread(void*){
 
 	/************************字幕处理**************************/
 	YUVImage yuvImage = { 0 };
-	MixerConfig mixerConfig = { 0 };
+	MixerConfig mixerConfig;
+
+	memset(&mixerConfig, 0, sizeof(MixerConfig));
 
 	yuvImage.dwPitch = WIDTH;
 	yuvImage.dwHeight= HEIGHT;
@@ -1146,10 +1145,6 @@ void *detect_thread(void *arg)
 {
 	printf("detect_thread : detect_thread start\n");
 	unsigned char *yuv_frame;
-	struct cooperation_signal coop_sig;
-	int sig_sock, so_broadcast = 1;
-	struct sockaddr_in adr_bc;
-	int ttl = 1;
 	int update_bg = 1;
 
 	int orig_d_sock, clnt_d_len;
@@ -1157,16 +1152,12 @@ void *detect_thread(void *arg)
 	int reuse_d_addr, bufsize_d_addr,bufsize_d_len;
 	int ret = 0;
 
-	CvMemStorage * storage = cvCreateMemStorage(0);
 	IplImage* bg = cvCreateImage(cvSize(lcd_width, lcd_height), IPL_DEPTH_8U, COLOR_CHN);
 	IplImage* img = cvCreateImageHeader(cvSize(lcd_width, lcd_height), IPL_DEPTH_8U, COLOR_CHN);
 	IplImage* copyimg = cvCreateImage(cvSize(lcd_width, lcd_height), IPL_DEPTH_8U, COLOR_CHN);
 	CvMat* bg_mat = cvCreateMat(lcd_height, lcd_width, CV_32FC1);
 	CvMat* img_mat = cvCreateMat(lcd_height, lcd_width, CV_32FC1);
 	int framenum = 0;
-
-	int zoom_step = 0;
-
 
 	struct timeval t_start,t_end;
 	long cost_time_sec,cost_time_usec;
@@ -1615,7 +1606,7 @@ static int fb_init(int win_num, int bpp, int x, int y, int width, int height, un
 	return dev_fp;
 }
 */
-#define MIN(x,y) ((x)>(y)?(y):(x))
+
 static void draw(char *dest, char *src, int width, int height, int bpp){
 	int x, y;
 	unsigned long *rgb32;
@@ -1816,7 +1807,7 @@ static void exit_from_app(){
     }
 }
 
-void clean_up(int sd, char* the_file)
+void clean_up(int sd, const char* the_file)
 {
 close(sd);
 unlink(the_file);
@@ -2045,7 +2036,6 @@ int findmotion(IplImage* img, IplImage* copyimg, IplImage* bg)
 	cvFindContours(img_contours, storage, &contours, sizeof(CvContour), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 	CvSeq    * current;
 	current=contours;
-	CvRect boundingBox;
 	
 	cvZero(show1);
 
