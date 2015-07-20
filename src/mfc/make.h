@@ -10,11 +10,11 @@ MFC_OBJ		= $(MFC_SRC:.c=.o)
 MFC_OBJ		:= $(filter %.o, $(MFC_OBJ))
 MFC_OBJ		:= $(patsubst $(MFC_SRC_DIR)/%, $(MFC_OBJ_DIR)/%, $(MFC_OBJ)) 
 
-MFC_DEP		= $(MFC_SRC:.c=.dep)
-MFC_DEP		:= $(filter %.dep, $(MFC_DEP))
-MFC_DEP		:= $(patsubst $(MFC_SRC_DIR)/%, $(MFC_OBJ_DIR)/%, $(MFC_DEP)) 
+MFC_INC		= -I$(MFC_INC_DIR)	\
+			-I$(COMMON_BASE)
 
-MFC_INC		= -I$(COMMON_BASE)
+MFC_DEP		= $(wildcard $(MFC_INC_DIR)/*.h)	\
+			$(wildcard $(COMMON_BASE)/*.h)
 
 MFC_CFLAGS	= $(CFLAGS)
 

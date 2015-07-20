@@ -8,19 +8,8 @@ $(MFC_TARGET): $(MFC_OBJ)
 	$(AR) rc $@ $^
 
 #define compile rules
-%.o: %.c
-	$(CC) $(MFC_CFLAGS) $(MFC_INC) $< -o $@
-
-ifneq ($(MAKECMDGOALS), clean)
-sinclude $(MFC_DEP)
-endif
-
-$(MFC_OBJ_DIR)/%.dep: $(MFC_SRC_DIR)/%.c
-	@set -e ; \
-	$(RM) -fr $@.tmp ; \
-	$(CC_NO_ECHO) $(MFC_CFLAGS) $(MFC_INC) -E -MM $(filter %.c, $^) > $@.tmp ; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@: ,g' < $@.tmp > $@ ; \
-	$(RM) -fr $@.tmp
+%.o: %.c $(MFC_DEP)
+	$(CC) $(MFC_INC) $(MFC_CFLAGS) $< -o $@
 
 clean:
 	@echo "Cleaning dhcp auto config object files"
@@ -32,7 +21,6 @@ print:
 	@echo MFC_INC_DIR=${MFC_INC_DIR}
 	@echo MFC_SRC_DIR=${MFC_SRC_DIR}
 	@echo MFC_OBJ_DIR=${MFC_OBJ_DIR}
-	@echo _MFC_OBJ_DIR=${_MFC_OBJ_DIR}
 	@echo MFC_DIRS=${MFC_DIRS}
 	@echo MFC_RMS=${MFC_RMS}
 	@echo MFC_SRC=${MFC_SRC}
