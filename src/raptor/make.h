@@ -10,11 +10,8 @@ RAPTOR_OBJ		= $(RAPTOR_SRC:.c=.o)
 RAPTOR_OBJ		:= $(filter %.o, $(RAPTOR_OBJ))
 RAPTOR_OBJ		:= $(patsubst $(RAPTOR_SRC_DIR)/%, $(RAPTOR_OBJ_DIR)/%, $(RAPTOR_OBJ)) 
 
-RAPTOR_DEP		= $(RAPTOR_SRC:.c=.dep)
-RAPTOR_DEP		:= $(filter %.dep, $(RAPTOR_DEP))
-RAPTOR_DEP		:= $(patsubst $(RAPTOR_SRC_DIR)/%, $(RAPTOR_OBJ_DIR)/%, $(RAPTOR_DEP)) 
-
-RAPTOR_INC		= 
+RAPTOR_INC		= -I$(RAPTOR_INC_DIR)
+RAPTOR_DEP		= $(wildcard $(RAPTOR_INC_DIR)/*.h)
 
 RAPTOR_CFLAGS	= $(CFLAGS) -lm -std=gnu99
 
