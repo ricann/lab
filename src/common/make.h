@@ -14,7 +14,7 @@ COMMON_DEP		= $(COMMON_SRC:.c=.dep)
 COMMON_DEP		:= $(filter %.dep, $(COMMON_DEP))
 COMMON_DEP		:= $(patsubst $(COMMON_SRC_DIR)/%, $(COMMON_OBJ_DIR)/%, $(COMMON_DEP)) 
 
-COMMON_INC		= 
+COMMON_INC		= -I$(COMMON_INC_DIR)
 
 COMMON_CFLAGS	= $(CFLAGS)
 
