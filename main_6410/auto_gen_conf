@@ -55,7 +55,7 @@ echo 'Generating scalar/config.lua file...'
 echo 'SL_port =' > ${LUA_CONF}
 echo '{' >> ${LUA_CONF}
 echo '	PATH = "/dev/ttySAC3",  --串口路径,(Top6410: /dev/ttySAC3)' >> ${LUA_CONF}
-echo '	BAUD = 9600,           --波特率' >> ${LUA_CONF}
+echo '	BAUD = 9600,            --波特率' >> ${LUA_CONF}
 echo '	DATA = 8,               --数据位数' >> ${LUA_CONF}
 echo '	PARI = 0,               --奇偶校验' >> ${LUA_CONF}
 echo '	STOP = 1                --停止位数' >> ${LUA_CONF}
@@ -64,8 +64,8 @@ echo '' >> ${LUA_CONF}
 echo '-------------------------------------------------------------' >> ${LUA_CONF}
 echo "BY_ADDR = \"$2\"" >> ${LUA_CONF}
 echo 'BY_PORT = "7777"' >> ${LUA_CONF}
-echo 'XD_ADDR = nil' >> ${LUA_CONF}
-echo 'XD_PORT = "7770"' >> ${LUA_CONF}
+echo 'XD_ADDR = "223.4.200.189"' >> ${LUA_CONF}
+echo 'XD_PORT = "30030"' >> ${LUA_CONF}
 echo '-------------------------------------------------------------' >> ${LUA_CONF}
 echo '' >> ${LUA_CONF}
 echo 'INTERVAL = 5' >> ${LUA_CONF}
