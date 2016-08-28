@@ -1,0 +1,21 @@
+
+RAPTOR_INC_DIR		= $(RAPTOR_BASE)
+RAPTOR_SRC_DIR		= $(RAPTOR_BASE)
+RAPTOR_OBJ_DIR		= $(RAPTOR_BASE)
+
+RAPTOR_DIRS		= $(RAPTOR_INC_DIR)  $(RAPTOR_SRC_DIR)  $(RAPTOR_OBJ_DIR)
+RAPTOR_SRC		= $(wildcard $(RAPTOR_SRC_DIR)/*.c)
+
+RAPTOR_OBJ		= $(RAPTOR_SRC:.c=.o)
+RAPTOR_OBJ		:= $(filter %.o, $(RAPTOR_OBJ))
+RAPTOR_OBJ		:= $(patsubst $(RAPTOR_SRC_DIR)/%, $(RAPTOR_OBJ_DIR)/%, $(RAPTOR_OBJ)) 
+
+RAPTOR_DEP		= $(RAPTOR_SRC:.c=.dep)
+RAPTOR_DEP		:= $(filter %.dep, $(RAPTOR_DEP))
+RAPTOR_DEP		:= $(patsubst $(RAPTOR_SRC_DIR)/%, $(RAPTOR_OBJ_DIR)/%, $(RAPTOR_DEP)) 
+
+RAPTOR_INC		= 
+
+RAPTOR_CFLAGS	= $(CFLAGS) -lm -std=gnu99
+
+
